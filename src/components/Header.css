@@ -1,0 +1,57 @@
+.hdr{
+  position: sticky; top: 0; z-index: 50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 24px; background:#0f2138; color:#f8fafc;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+}
+.hdr.dark{ background:#0b1729; }
+
+.brand{ display:flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.3px; }
+.logo{ width:26px; height:26px; }
+
+.nav{ display:flex; gap:22px; }
+.nav a{ text-decoration:none; color:#cbd5e1; font-weight:600; }
+.nav a:hover{ color:#93c5fd; }
+
+.mode{ border:0; background:transparent; cursor:pointer; font-size:18px; color:#f8fafc; }
+
+/* (Tùy chọn) theme tối toàn trang khi Header bật dark */
+.theme-dark body, .theme-dark {
+  background:#0b1220; color:#e5e7eb;
+}
+.theme-dark .todo-app .title { color:#e5e7eb; }
+.theme-dark input, .theme-dark select {
+  background:#0f172a; color:#e5e7eb; border-color:#334155;
+}
+.theme-dark .todo-list { background:#0f172a; border-color:#1f2937; }
+.theme-dark .todo { border-color:#1f2937; }
+.nav a.active { color: #93c5fd; }
+/* Khi bật dark mode cho toàn bộ app */
+.theme-dark body, 
+.theme-dark {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.theme-dark .todo-app {
+  background: #1e293b;
+  color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark input, 
+.theme-dark select, 
+.theme-dark textarea {
+  background: #334155;
+  color: #f1f5f9;
+  border: 1px solid #475569;
+}
+
+.theme-dark button {
+  background: #3b82f6;
+  color: #f8fafc;
+}
+
+.theme-dark .hdr.dark {
+  background: #020617;
+}

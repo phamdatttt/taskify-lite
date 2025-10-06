@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import type { Task } from "../types/task";
 
 type Props = { onAdd: (t: Task) => void; onClearCompleted: () => void };
@@ -8,10 +8,11 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmed = title.trim();
     if (!trimmed) return;
+
     onAdd({
       id: crypto.randomUUID(),
       title: trimmed,
@@ -20,6 +21,7 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
       completed: false,
       createdAt: new Date().toISOString(),
     });
+
     setTitle("");
     setDescription("");
     setPriority("low");
@@ -49,7 +51,6 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      {/* CHÍNH LỖI Ở ĐÂY — phải là object, không phải string */}
       <div style={{ display: "flex", justifyContent: "flex-end", margin: "6px 0 10px" }}>
         <button type="button" className="clear-btn" onClick={onClearCompleted}>
           Xóa công việc đã hoàn thành

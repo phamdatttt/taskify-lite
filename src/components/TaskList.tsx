@@ -1,5 +1,5 @@
-import type { Task } from "../types/task";
 import TaskItem from "./TaskItem";
+import type { Task } from "../types/task";
 
 type Filter = "all" | "active" | "completed";
 type SortBy = "createdAt" | "priority";
@@ -9,30 +9,31 @@ type Props = {
   filter: Filter;
   search: string;
   sortBy: SortBy;
-  onFilterChange: (f: Filter) => void;
-  onSearchChange: (q: string) => void;
-  onSortChange: (s: SortBy) => void;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, title: string) => void;
 };
 
 export default function TaskList({
-  items, filter, search, sortBy,
-  onFilterChange, onSearchChange, onSortChange,
-  onToggle, onDelete, onEdit,
+  items,
+  filter,
+  search,
+  sortBy,
+  onToggle,
+  onDelete,
+  onEdit,
 }: Props) {
   const filtered = items
-    .filter(t => filter === "active" ? !t.completed : filter === "completed" ? t.completed : true)
-    .filter(t => t.title.toLowerCase().includes(search.toLowerCase()));
+    .filter((t) => (filter === "active" ? !t.completed : filter === "completed" ? t.completed : true))
+    .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "createdAt") return b.createdAt.localeCompare(a.createdAt);
     const score = { high: 3, medium: 2, low: 1 } as const;
     return score[b.priority] - score[a.priority];
-  });
+    });
 
-  const activeCount = items.filter(t => !t.completed).length;
+  const activeCount = items.filter((t) => !t.completed).length;
   const completedCount = items.length - activeCount;
 
   return (
@@ -42,8 +43,14 @@ export default function TaskList({
       </div>
 
       <ul className="todo-list">
-        {sorted.map(t => (
-          <TaskItem key={t.id} task={t} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
+        {sorted.map((t) => (
+          <TaskItem
+            key={t.id}
+            task={t}
+            onToggle={onToggle}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
         ))}
         {sorted.length === 0 && <p className="empty">Không có công việc nào</p>}
       </ul>

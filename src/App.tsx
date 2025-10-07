@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Header from "./components/Header";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
 import type { Task } from "./types/task";
@@ -32,52 +31,50 @@ export default function App() {
   }
 
   return (
-    <>
-      <Header />
-      <main>
-        <div className="todo-app">
-          <h1 className="title">Taskify Lite</h1>
+    <main>
+      <div className="todo-app">
+        {/* Form thêm công việc */}
+        <AddTaskForm onAdd={addTask} onClearCompleted={clearCompleted} />
 
-          <AddTaskForm onAdd={addTask} onClearCompleted={clearCompleted} />
-
-          <div className="secondary-actions">
-            <div className="filters">
-              {(["all", "active", "completed"] as const).map((f) => (
-                <button
-                  key={f}
-                  className={filter === f ? "active" : ""}
-                  onClick={() => setFilter(f)}
-                >
-                  {f === "all" ? "Tất cả" : f === "active" ? "Đang làm" : "Hoàn thành"}
-                </button>
-              ))}
-            </div>
-
-            <div className="search-sort">
-              <input
-                type="text"
-                placeholder="Tìm kiếm công việc…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortBy)}>
-                <option value="createdAt">Mới nhất</option>
-                <option value="priority">Theo ưu tiên</option>
-              </select>
-            </div>
+        {/* Bộ lọc + tìm kiếm + sắp xếp */}
+        <div className="secondary-actions">
+          <div className="filters">
+            {(["all", "active", "completed"] as const).map((f) => (
+              <button
+                key={f}
+                className={filter === f ? "active" : ""}
+                onClick={() => setFilter(f)}
+              >
+                {f === "all" ? "Tất cả" : f === "active" ? "Đang làm" : "Hoàn thành"}
+              </button>
+            ))}
           </div>
 
-          <TaskList
-            items={tasks}
-            filter={filter}
-            search={search}
-            sortBy={sortBy}
-            onToggle={toggleTask}
-            onDelete={deleteTask}
-            onEdit={editTask}
-          />
+          <div className="search-sort">
+            <input
+              type="text"
+              placeholder="Tìm kiếm công việc…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortBy)}>
+              <option value="createdAt">Mới nhất</option>
+              <option value="priority">Theo ưu tiên</option>
+            </select>
+          </div>
         </div>
-      </main>
-    </>
+
+        {/* Danh sách công việc */}
+        <TaskList
+          items={tasks}
+          filter={filter}
+          search={search}
+          sortBy={sortBy}
+          onToggle={toggleTask}
+          onDelete={deleteTask}
+          onEdit={editTask}
+        />
+      </div>
+    </main>
   );
 }

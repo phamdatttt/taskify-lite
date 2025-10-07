@@ -1,0 +1,59 @@
+.shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100dvh;
+}
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 96%, var(--bg) 4%);
+  padding: 16px 12px;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; letter-spacing: .2px; margin-bottom: 16px;
+}
+.brand .logo { width: 26px; height: 26px; }
+
+.menu { display: grid; gap: 6px; }
+.item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  text-decoration: none; color: var(--text);
+  border: 1px solid transparent;
+  transition: background var(--t), border-color var(--t), transform var(--t);
+}
+.item:hover { background: color-mix(in srgb, var(--surface) 92%, var(--bg) 8%); transform: translateY(-1px); }
+.item.active {
+  background: var(--primary-50);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.content { display: grid; grid-template-rows: 56px 1fr; }
+
+.topbar {
+  height: 56px; display: flex; align-items: center; gap: 10px;
+  padding: 0 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.grow { flex: 1; }
+
+.icon-btn {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: 10px; border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, var(--bg) 8%);
+  cursor: pointer;
+  transition: transform var(--t), box-shadow var(--t), background var(--t);
+}
+.icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+
+.main { padding: 20px; }
+
+/* Responsive: ẩn sidebar trên mobile */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}

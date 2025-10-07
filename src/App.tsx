@@ -2,41 +2,68 @@ import { useState } from "react";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
 import type { Task } from "./types/task";
-import { useLocalStorage } from "./hooks/useLocalStorage";
 import "./index.css";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getTasks, addTask, toggleTask, deleteTask, editTask, clearCompleted as apiClearCompleted } from "./api/tasksApi";
 
 type Filter = "all" | "active" | "completed";
 type SortBy = "createdAt" | "priority";
 
 export default function App() {
-  const [tasks, setTasks] = useLocalStorage<Task[]>("tasks", []);
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortBy>("createdAt");
 
-  function addTask(t: Task) {
-    setTasks([t, ...tasks]);
-  }
-  function toggleTask(id: string) {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
-  }
-  function deleteTask(id: string) {
-    setTasks(tasks.filter((t) => t.id !== id));
-  }
-  function editTask(id: string, title: string) {
-    setTasks(tasks.map((t) => (t.id === id ? { ...t, title } : t)));
-  }
-  function clearCompleted() {
-    setTasks(tasks.filter((t) => !t.completed));
-  }
+  const qc = useQueryClient();
+
+  // Query: lấy danh sách task
+  const { data: tasks = [], isLoading, isError } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: getTasks,
+  });
+
+  // Mutations
+  const mAdd = useMutation({
+    mutationFn: (t: Task) => addTask(t),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const mToggle = useMutation({
+    mutationFn: (id: string) => toggleTask(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const mDelete = useMutation({
+    mutationFn: (id: string) => deleteTask(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const mEdit = useMutation({
+    mutationFn: ({ id, title }: { id: string; title: string }) => editTask(id, title),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const mClear = useMutation({
+    mutationFn: () => apiClearCompleted(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  // bridge cho AddTaskForm & TaskList
+  function addTaskHandler(t: Task) { mAdd.mutate(t); }
+  function toggleTaskHandler(id: string) { mToggle.mutate(id); }
+  function deleteTaskHandler(id: string) { mDelete.mutate(id); }
+  function editTaskHandler(id: string, title: string) { mEdit.mutate({ id, title }); }
+  function clearCompletedHandler() { mClear.mutate(); }
+
+  if (isLoading) return <div className="page"><p className="muted">Đang tải dữ liệu…</p></div>;
+  if (isError)   return <div className="page"><p className="muted">Lỗi tải dữ liệu. Thử tải lại trang.</p></div>;
 
   return (
     <main>
       <div className="todo-app">
-        {/* Form thêm công việc */}
-        <AddTaskForm onAdd={addTask} onClearCompleted={clearCompleted} />
+        <AddTaskForm onAdd={addTaskHandler} onClearCompleted={clearCompletedHandler} />
 
-        {/* Bộ lọc + tìm kiếm + sắp xếp */}
         <div className="secondary-actions">
           <div className="filters">
             {(["all", "active", "completed"] as const).map((f) => (
@@ -64,15 +91,14 @@ export default function App() {
           </div>
         </div>
 
-        {/* Danh sách công việc */}
         <TaskList
           items={tasks}
           filter={filter}
           search={search}
           sortBy={sortBy}
-          onToggle={toggleTask}
-          onDelete={deleteTask}
-          onEdit={editTask}
+          onToggle={toggleTaskHandler}
+          onDelete={deleteTaskHandler}
+          onEdit={editTaskHandler}
         />
       </div>
     </main>

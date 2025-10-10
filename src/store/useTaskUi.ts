@@ -1,8 +1,9 @@
+// src/store/useTaskUi.ts
 import { create } from "zustand";
-import { persist, devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
-type Filter = "all" | "active" | "completed";
-type SortBy = "createdAt" | "priority";
+export type Filter = "all" | "active" | "completed";
+export type SortBy = "createdAt" | "priority";
 
 type TaskUiState = {
   filter: Filter;
@@ -13,10 +14,18 @@ type TaskUiState = {
   setSortBy: (v: SortBy) => void;
 };
 
+// Kiểu cho hàm set của zustand để tránh 'any'
+type SetFn = (
+  partial:
+    | Partial<TaskUiState>
+    | ((state: TaskUiState) => Partial<TaskUiState>),
+  replace?: boolean
+) => void;
+
 export const useTaskUi = create<TaskUiState>()(
   devtools(
-    persist(
-      (set) => ({
+    persist<TaskUiState>(
+      (set: SetFn) => ({
         filter: "all",
         search: "",
         sortBy: "createdAt",
@@ -24,7 +33,7 @@ export const useTaskUi = create<TaskUiState>()(
         setSearch: (v) => set({ search: v }),
         setSortBy: (v) => set({ sortBy: v }),
       }),
-      { name: "task-ui" } // localStorage key
+      { name: "taskify-ui" }
     ),
     { name: "TaskUiStore" }
   )

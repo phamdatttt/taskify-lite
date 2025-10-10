@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App";
 import Dashboard from "./pages/Dashboard";
 import Stats from "./pages/Stats";
@@ -17,7 +17,8 @@ applyTheme(getTheme());
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      {/* ✅ Đổi từ BrowserRouter → HashRouter */}
+      <HashRouter>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Navigate to="/tasks" replace />} />
@@ -28,7 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="*" element={<Navigate to="/tasks" replace />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
 
       {/* Devtools để soi cache/query, có thể bỏ nếu không cần */}
       <ReactQueryDevtools initialIsOpen={false} />

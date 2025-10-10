@@ -1,20 +1,20 @@
+// src/components/AddTaskForm.tsx
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import type { Task } from "../types/task";
 
-type Props = { onAdd: (t: Task) => void; onClearCompleted: () => void; };
-type FormValues = { title: string; description?: string; priority: "low" | "medium" | "high"; };
-
 const schema = yup.object({
-  title: yup.string().trim().min(2, "Tối thiểu 2 ký tự").max(60, "Tối đa 60 ký tự")
-            .required("Vui lòng nhập tiêu đề"),
+  title: yup.string().trim().min(2, "Tối thiểu 2 ký tự").max(60, "Tối đa 60 ký tự").required("Vui lòng nhập tiêu đề"),
   description: yup.string().trim().max(200, "Mô tả tối đa 200 ký tự").optional(),
-  priority: yup.mixed<"low" | "medium" | "high">()
-              .oneOf(["low", "medium", "high"], "Chọn mức ưu tiên")
-              .required("Chọn mức ưu tiên"),
+  priority: yup.mixed<"low" | "medium" | "high">().oneOf(["low", "medium", "high"], "Chọn mức ưu tiên").required(),
 });
+
+// Lấy type từ schema để khỏi lệch
+type FormValues = yup.InferType<typeof schema>;
+
+type Props = { onAdd: (t: Task) => void; onClearCompleted: () => void; };
 
 export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
   const { register, handleSubmit, reset, setFocus,
@@ -26,7 +26,7 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
 
   useEffect(() => { setFocus("title"); }, [setFocus]);
 
-  const onSubmit = (v: FormValues) => {
+  const onSubmit: SubmitHandler<FormValues> = (v) => {
     onAdd({
       id: crypto.randomUUID(),
       title: v.title.trim(),
@@ -35,7 +35,8 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
       completed: false,
       createdAt: new Date().toISOString(),
     });
-    reset(); setFocus("title");
+    reset();
+    setFocus("title");
   };
 
   return (
@@ -55,8 +56,8 @@ export default function AddTaskForm({ onAdd, onClearCompleted }: Props) {
       {errors.title && <p className="err">{errors.title.message}</p>}
       {errors.priority && <p className="err">{errors.priority.message}</p>}
 
-      <textarea className="desc-input" placeholder="Mô tả chi tiết (tùy chọn)…"
-        rows={2} {...register("description")} aria-invalid={!!errors.description}/>
+      <textarea className="desc-input" placeholder="Mô tả chi tiết (tùy chọn)…" rows={2}
+        {...register("description")} aria-invalid={!!errors.description}/>
       {errors.description && <p className="err">{errors.description.message}</p>}
 
       <div style={{ display: "flex", justifyContent: "flex-end", margin: "6px 0 10px" }}>
